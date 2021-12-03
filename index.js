@@ -1,10 +1,9 @@
 const { fetchMyIP } = require('./iss');
 
-// Modified breedFetcher.js
-fetchMyIP((error, desc) => {
+fetchMyIP((error, ip) => {
   if (error) {
-    console.log('Error fetch details:', error);
-  } else {
-    console.log(desc);
+    console.log("It didn't work!" , error);
+    return;
   }
+  console.log('It worked! Returned IP:' , ip);
 });

@@ -1,3 +1,4 @@
+const request = require('request'); // Put this at the top
 /**
  * Makes a single API request to retrieve the user's IP address.
  * Input:
@@ -6,23 +7,26 @@
  *   - An error, if any (nullable)
  *   - The IP address as a string (null if error). Example: "162.245.144.188"
  */
- const request = require('request');
 
 
- const fetchMyIP = function(callback) {
+const fetchMyIP = (callback) => {
   request(`https://api.ipify.org?format=json`, (error, response, body) => {
-    // console.log('statusCode:', response && response.statusCode); // statusCode: 200 is SUCCESS!
-  //  console.log(body);
-    // Prints ONLY the description!
-    // console.log('type of body:', typeof body); // string!
     if (error) {
-      console.log(error, `${null} AN ERROR HAS OCCURED!`); // Print null if one occurred
+      callback(error, `${null} AN ERROR HAS OCCURED!`); // Print null if one occurred
+      
+    }
+    if (response.statusCode !== 200) {   // if non-200 status, assume server error
+      const msg = (`Status Code ${response.statusCode} when fetching IP. Response: ${body}`, null);
+      callback(Error(msg), null); // CREATES A NEW ERROR OBJECT THAT WE CAN PASS AROUND
       return;
     }
-    const data = JSON.parse(body); // ADDED to make string into OBJECT!
-    console.log(data);
+    const ip = JSON.parse(body).ip; // ADDED to make string into OBJECT! 
+    // ip NOT data!!!
+    callback(null, ip);
+    // console.log(data); // COMMENT THIS OUT
+    // if we get here, all's well and we got the data
   });
 };
- 
+
 
 module.exports = { fetchMyIP };
